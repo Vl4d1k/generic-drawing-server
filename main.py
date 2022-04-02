@@ -71,6 +71,8 @@ def images_get(uuid):
 
     result = sorted(result)
 
+    result = result[0: len(result): 10]
+
     return jsonify(list(map(lambda name: f'img/generated/{uuid}/{name}', result)))
 
 @app.route("/")
