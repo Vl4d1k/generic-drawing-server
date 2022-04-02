@@ -1,0 +1,17 @@
+# flask-uwsgi.service for systemd
+
+project_dir = /srv/flask-uwsgi/flask_skeleton
+
+[Unit]
+Description=uWSGI instance to serve flask-uwsgi project
+After=network.target
+
+[Service]
+User=root
+#Group=root
+WorkingDirectory = %(project_dir)
+Environment = 'PATH=%project_dir%/venv/bin'
+ExecStart = %project_dir%/venv/bin/uwsgi --ini uwsgi.ini
+
+[Install]
+WantedBy=multi-user.target"
