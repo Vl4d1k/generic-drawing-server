@@ -2,7 +2,7 @@
 
 # a directory of project
   chdir="/srv/flask-uwsgi/"
-  project_dir='generic-drawing-server/'
+  project_dir='generic-drawing-server'
   pgmode="production" #debug, production
 
   #удаление всех папок и файлов
