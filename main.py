@@ -1,5 +1,5 @@
 import uuid
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 
 from GeneratorThread import *
 
@@ -9,6 +9,11 @@ threadsPool = []
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/img/<string:folder>/<string:upload_img_uuid>/<int:img_id>', methods=['GET'])
+def get_image(folder, upload_img_uuid, img_id):
+    img_path = f'storage/{folder}/{upload_img_uuid}/{img_id}.jpg'
+    return send_file(img_path, mimetype='image/jpg')
 
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
