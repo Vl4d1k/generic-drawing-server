@@ -1,25 +1,30 @@
-import os
 import uuid
 from flask import Flask, request, jsonify
 
-UPLOAD_FOLDER = 'uploads'
+from GeneratorThread import *
+
+UPLOAD_FOLDER = 'storage/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+threadsPool = []
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
-    print(request.files)
     uploadedImage = request.files['image']
     if uploadedImage is None:
         return 'there is no image in form!'
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.mkdir(app.config['UPLOAD_FOLDER'])
     
-    pid = uuid.uuid4()
-    uploadedImage.filename = pid
+    pid = str(uuid.uuid4())
+    uploadedImage.filename = f'{pid}.png'
     path = os.path.join(app.config['UPLOAD_FOLDER'], uploadedImage.filename)
     uploadedImage.save(path)
+
+    th = GeneratorThread(pid)
+    threadsPool.append(th)
+    th.start()
     
     return jsonify(pid=pid)
