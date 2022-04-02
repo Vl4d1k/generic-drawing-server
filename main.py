@@ -1,8 +1,11 @@
 import os.path
 import uuid
 from flask import Flask, request, jsonify, send_file
+import shelve
 
 from GeneratorThread import *
+
+db = shelve.open('db')
 
 UPLOAD_FOLDER = 'storage/uploads'
 GENERATE_FOLDER = 'storage/generated'
@@ -39,7 +42,9 @@ def upload_image():
     th = GeneratorThread(pid)
     threadsPool.append(th)
     th.start()
-    
+
+    db[pid] = request.form['title']
+
     return jsonify(pid=pid)
 
 @app.route('/images/preview', methods=['GET'])
@@ -53,7 +58,8 @@ def images_preview():
         uid = os.path.splitext(file.name)[0]
         result.append({
             "image": f'img/uploads/{uid}',
-            "id": uid
+            "id": uid,
+            "title": db.get(uid)
         })
 
     return jsonify(result)
@@ -73,7 +79,10 @@ def images_get(uuid):
 
     result = result[0: len(result): 10]
 
-    return jsonify(list(map(lambda name: f'img/generated/{uuid}/{name}', result)))
+    return jsonify({
+        "title": db[uuid],
+        "images": list(map(lambda name: f'img/generated/{uuid}/{name}', result))
+    })
 
 @app.route("/")
 def hello():
