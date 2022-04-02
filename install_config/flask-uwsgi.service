@@ -1,6 +1,6 @@
 # flask-uwsgi.service for systemd
 
-project_dir = /srv/flask-uwsgi/flask_skeleton
+project_dir = /srv/flask-uwsgi/generic-drawing-server
 
 [Unit]
 Description=uWSGI instance to serve flask-uwsgi project
