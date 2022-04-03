@@ -95,11 +95,12 @@ def images_get(uuid):
 
 @app.route('/gif/<string:uuid>', methods=['GET'])
 def gif_get(uuid):
-    path = f"{app.config['GIF_FOLDER']}/{uuid}"
+    pathToGenerated = f"{app.config['GIF_FOLDER']}/{uuid}.gif"
+    path = f"img/gif/{uuid}"
     dir = os.scandir(os.path.join(app.config["GENERATE_FOLDER"], uuid))
     frames = []
 
-    if os.path.exists(path):
+    if os.path.exists(pathToGenerated):
         return path
 
     for file in dir:
@@ -112,7 +113,7 @@ def gif_get(uuid):
     frames = list(map(lambda name: Image.open(f'{app.config["GENERATE_FOLDER"]}/{uuid}/{name}.png'), frames))
 
     frames[0].save(
-        f'{path}.gif',
+        pathToGenerated,
         save_all=True,
         append_images=frames[1:],
         optimize=True,
@@ -121,7 +122,7 @@ def gif_get(uuid):
         quality=5
     )
 
-    optimize(f'{path}.gif')
+    optimize(pathToGenerated)
 
     return path
 
