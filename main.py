@@ -89,7 +89,7 @@ def images_get(uuid):
     result = result[0: len(result): 10]
 
     return jsonify({
-        "title": db[uuid],
+        "title": db.get(uuid),
         "images": list(map(lambda name: f'img/generated/{uuid}/{name}', result))
     })
 
