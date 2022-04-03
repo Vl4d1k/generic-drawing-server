@@ -48,7 +48,7 @@ def upload_image():
     path = os.path.join(app.config['UPLOAD_FOLDER'], uploadedImage.filename)
     uploadedImage.save(path)
 
-    th = GeneratorThread(pid, stages=140)
+    th = GeneratorThread(pid, stages=80)
     threadsPool.append(th)
     th.start()
 
