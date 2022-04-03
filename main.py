@@ -121,7 +121,7 @@ def gif_get(uuid):
         quality=5
     )
 
-    optimize(path)
+    optimize(f'{path}.gif')
 
     return path
 
