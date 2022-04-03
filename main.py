@@ -30,6 +30,11 @@ def get_image_(upload_img_uuid):
     img_path = f'storage/uploads/{upload_img_uuid}.png'
     return send_file(img_path, mimetype='image/jpg')
 
+@app.route('/img/gif/<string:upload_img_uuid>', methods=['GET'])
+def get_gif(upload_img_uuid):
+    img_path = f'storage/gif/{upload_img_uuid}.gif'
+    return send_file(img_path, mimetype='image/gif')
+
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     uploadedImage = request.files['image']
@@ -90,7 +95,7 @@ def images_get(uuid):
 
 @app.route('/gif/<string:uuid>', methods=['GET'])
 def gif_get(uuid):
-    path = f"{app.config['GIF_FOLDER']}/{uuid}.gif"
+    path = f"{app.config['GIF_FOLDER']}/{uuid}"
     dir = os.scandir(os.path.join(app.config["GENERATE_FOLDER"], uuid))
     frames = []
 
