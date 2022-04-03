@@ -112,7 +112,7 @@ def gif_get(uuid):
     frames = list(map(lambda name: Image.open(f'{app.config["GENERATE_FOLDER"]}/{uuid}/{name}.png'), frames))
 
     frames[0].save(
-        path,
+        f'{path}.gif',
         save_all=True,
         append_images=frames[1:],
         optimize=True,
