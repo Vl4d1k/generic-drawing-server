@@ -1,5 +1,6 @@
 from threading import Thread
 import os
+from PIL import Image
 
 from GeneticDrawing import *
 
@@ -19,4 +20,5 @@ class GeneratorThread(Thread):
             os.mkdir(path)
 
         for i, image in enumerate(gen.generate(self.stages, self.generations, show_progress_imgs=False)):
-            cv2.imwrite(os.path.join(path, f"{i}.png"), image)
+            img = Image.fromarray(image)
+            img.save(os.path.join(path, f"{i}.png"), quality=20)

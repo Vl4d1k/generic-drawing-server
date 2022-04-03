@@ -2,6 +2,8 @@ import os.path
 import uuid
 from flask import Flask, request, jsonify, send_file
 import shelve
+from PIL import Image
+from pygifsicle import optimize
 
 from GeneratorThread import *
 
@@ -9,12 +11,14 @@ db = shelve.open('db')
 
 UPLOAD_FOLDER = 'storage/uploads'
 GENERATE_FOLDER = 'storage/generated'
+GIF_FOLDER = 'storage/gif'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 threadsPool = []
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['GENERATE_FOLDER'] = GENERATE_FOLDER
+app.config['GIF_FOLDER'] = GIF_FOLDER
 
 @app.route('/img/generated/<string:upload_img_uuid>/<int:img_id>', methods=['GET'])
 def get_image(upload_img_uuid, img_id):
@@ -83,6 +87,38 @@ def images_get(uuid):
         "title": db[uuid],
         "images": list(map(lambda name: f'img/generated/{uuid}/{name}', result))
     })
+
+@app.route('/gif/<string:uuid>', methods=['GET'])
+def gif_get(uuid):
+    path = f"{app.config['GIF_FOLDER']}/{uuid}.gif"
+    dir = os.scandir(os.path.join(app.config["GENERATE_FOLDER"], uuid))
+    frames = []
+
+    if os.path.exists(path):
+        return path
+
+    for file in dir:
+        if not file.is_file():
+            continue
+        fileName = os.path.splitext(file.name)[0]
+        frames.append(int(fileName))
+
+    frames = sorted(frames)
+    frames = list(map(lambda name: Image.open(f'{app.config["GENERATE_FOLDER"]}/{uuid}/{name}.png'), frames))
+
+    frames[0].save(
+        path,
+        save_all=True,
+        append_images=frames[1:],
+        optimize=True,
+        duration=100,
+        loop=1,
+        quality=5
+    )
+
+    optimize(path)
+
+    return path
 
 @app.route("/")
 def hello():
