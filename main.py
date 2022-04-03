@@ -96,12 +96,14 @@ def images_get(uuid):
 @app.route('/gif/<string:uuid>', methods=['GET'])
 def gif_get(uuid):
     pathToGenerated = f"{app.config['GIF_FOLDER']}/{uuid}.gif"
-    path = f"img/gif/{uuid}"
+    result = jsonify({
+        "image": f"img/gif/{uuid}"
+    })
     dir = os.scandir(os.path.join(app.config["GENERATE_FOLDER"], uuid))
     frames = []
 
     if os.path.exists(pathToGenerated):
-        return path
+        return result
 
     for file in dir:
         if not file.is_file():
@@ -124,7 +126,7 @@ def gif_get(uuid):
 
     optimize(pathToGenerated)
 
-    return path
+    return result
 
 @app.route("/")
 def hello():
